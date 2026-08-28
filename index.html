@@ -75,8 +75,8 @@
 
         /* --- PAGE 2: TIMER & HEART --- */
         .timer-display {
-            font-size: 1.1rem; color: var(--primary); 
-            background: white; padding: 15px 25px; border-radius: 50px;
+            font-size: 0.95rem; color: var(--primary); 
+            background: white; padding: 12px 20px; border-radius: 50px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;
             font-weight: 400; text-align: center; white-space: nowrap;
         }
@@ -242,18 +242,43 @@
         function startTimer() {
             setInterval(() => {
                 const now = new Date();
-                const diff = now - startDate;
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const h = Math.floor((diff / (1000*60*60)) % 24);
-                const m = Math.floor((diff / (1000*60)) % 60);
-                const s = Math.floor((diff / 1000) % 60);
-                document.getElementById('timer').innerText = `${days} วัน ${h} ชั่วโมง ${m} นาที ${s} วินาที`;
+                
+                let years = now.getFullYear() - startDate.getFullYear();
+                let months = now.getMonth() - startDate.getMonth();
+                let days = now.getDate() - startDate.getDate();
+                let hours = now.getHours() - startDate.getHours();
+                let minutes = now.getMinutes() - startDate.getMinutes();
+                let seconds = now.getSeconds() - startDate.getSeconds();
+
+                if (seconds < 0) {
+                    seconds += 60;
+                    minutes--;
+                }
+                if (minutes < 0) {
+                    minutes += 60;
+                    hours--;
+                }
+                if (hours < 0) {
+                    hours += 24;
+                    days--;
+                }
+                if (days < 0) {
+                    const prevMonthLastDay = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                    days += prevMonthLastDay;
+                    months--;
+                }
+                if (months < 0) {
+                    months += 12;
+                    years--;
+                }
+
+                document.getElementById('timer').innerText = `${years} ปี ${months} เดือน ${days} วัน ${hours} ชม. ${minutes} นาที ${seconds} วินาที`;
             }, 1000);
         }
 
         function fillHeart() {
             if(percent >= 100) return;
-            percent += 1; // เพิ่มทีละ 1%
+            percent += 1;
             document.getElementById('waterLevel').setAttribute('y', 200 - (200 * (percent/100)));
             document.getElementById('percent').innerText = percent + "%";
             
